@@ -2,8 +2,6 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,28 +44,8 @@
 
     agent-skills.url = "github:Kyure-A/agent-skills-nix";
 
-    anthropic-skills = {
-      url = "github:anthropics/skills";
-      flake = false;
-    };
-
-    niri = {
-      url = "github:epireyn/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     vicinae = {
       url = "github:vicinaehq/vicinae";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-matlab = {
-      url = "gitlab:doronbehar/nix-matlab";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    antigravity-cli-nix = {
-      url = "github:joegoldin/antigravity-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
