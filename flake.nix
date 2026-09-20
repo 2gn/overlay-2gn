@@ -2,6 +2,8 @@
   description = "A very basic flake";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -65,11 +67,17 @@
     };
   };
 
-  outputs = inputs@{self, ... }: {
+  outputs = inputs@{ self, ... }: {
     overlays.default = final: prev:
       let
-        packageFlakes = builtins.removeAttrs inputs [ "self" ]      ;
+        # Safely check if the flake exposes a default package for the current architecture
+        hasDefaultPackage = flake:
+          final.lib.hasAttrByPath [ "packages" prev.system "default" ] flake;
+
+        # Filter the inputs to only include those that actually have the package
+        validFlakes = final.lib.filterAttrs (name: flake: name != "self" && hasDefaultPackage flake) inputs;
       in
-        builtins.mapAttrs (name: flake: flake.packages.${prev.system}.default) packageFlakes;
-  };
+        # Now map over the filtered list without encountering missing attribute errors
+        builtins.mapAttrs (name: flake: flake.packages.${prev.system}.default) validFlakes;
+    };
 }
